@@ -1,5 +1,5 @@
 package com.tiendamascotitas.demo.model;
-import jakarta.persistence.Column;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -13,17 +13,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "productos")
+@Table(name = "productos_pedidos")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Producto {
+public class ProductosPedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
-    @Column(name = "nombre", nullable = false)
-    private String nombre;
-    @Column(name = "descripcion", nullable = false)
-    private String descripcion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id") // Clave foránea hacia la tabla 'productos'
+    private Producto producto;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pedido_id") // Clave foránea hacia la tabla 'pedidos'
+    private Pedido pedido;
+    @JoinColumn(name = "cantidad") 
+    private int cantidad; 
 }
