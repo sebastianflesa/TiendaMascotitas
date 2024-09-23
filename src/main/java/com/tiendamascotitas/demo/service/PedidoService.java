@@ -16,4 +16,5 @@ public interface PedidoService {
     public List<Pedido> getAllPedidos();
     public ProductosPedido createPedidoProductos(ProductosPedido productosPedido);
     public Pedido crearPedido(Pedido pedido);
+    public Pedido getPedidoById(Long id);
 }

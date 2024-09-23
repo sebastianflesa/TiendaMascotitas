@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,5 +41,10 @@ public class PedidoController {
     @PostMapping("/crear_pedido")
     public Pedido createPedido(@RequestBody Pedido pedido) {
         return pedidoService.crearPedido(pedido);
+    }
+
+    @GetMapping("/{id}")
+    public Pedido getPedidoById(@PathVariable Long id) {
+        return pedidoService.getPedidoById(id);
     }
 }

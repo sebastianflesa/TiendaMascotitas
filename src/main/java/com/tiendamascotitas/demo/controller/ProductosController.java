@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tiendamascotitas.demo.model.Pedido;
 import com.tiendamascotitas.demo.model.Producto;
 import com.tiendamascotitas.demo.service.ProductoService;
 
@@ -47,7 +49,7 @@ public class ProductosController {
         
         if (producto.isPresent()) {
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put("id_pedido", producto.get().getId());
+            map.put("id_producto", producto.get().getId());
             map.put("descripcion", producto.get().getDescripcion());
             map.put("nombre", producto.get().getNombre());
             return ResponseEntity.ok(map);
@@ -57,6 +59,11 @@ public class ProductosController {
             map.put("status", "404");
             return ResponseEntity.status(200).body(map);
         }
+    }
+
+    @DeleteMapping("/{id}")
+    public Producto deletePedido(@PathVariable Long id) {
+        return productosService.deletePedido(id);
     }
 
 

@@ -45,5 +45,16 @@ public class ProductoServiceImpl  implements ProductoService {
                
     }
 
+    @Override
+    public Producto deletePedido(Long id) {
+        Optional<Producto> producto = productosRepository.findById(id);
+        if (producto.isPresent()) {
+            productosRepository.deleteById(id);
+            return producto.get();
+        } else {
+            throw new IllegalArgumentException("Producto no encontrado");
+        }
+    }
+
     
 }
