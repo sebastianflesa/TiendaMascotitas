@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tiendamascotitas.demo.model.Pedido;
 import com.tiendamascotitas.demo.model.ProductosPedido;
 import com.tiendamascotitas.demo.service.PedidoService;
+
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -39,12 +46,30 @@ public class PedidoController {
     }
     
     @PostMapping("/crear_pedido")
-    public Pedido createPedido(@RequestBody Pedido pedido) {
-        return pedidoService.crearPedido(pedido);
+    public ResponseEntity<?> createPedido(@RequestBody Pedido pedido) {
+        Pedido newPedido = pedidoService.crearPedido(pedido);
+        EntityModel<Pedido> resource = EntityModel.of(newPedido);
+        resource.add(linkTo(methodOn(PedidoController.class).getPedidoById(Long.valueOf(newPedido.getId()))).withSelfRel());
+        resource.add(linkTo(methodOn(PedidoController.class).getPedidos()).withRel("all-pedidos"));
+        return ResponseEntity.ok(resource);
     }
 
+
     @GetMapping("/{id}")
-    public Pedido getPedidoById(@PathVariable Long id) {
-        return pedidoService.getPedidoById(id);
+    public ResponseEntity<?> getPedidoById(@PathVariable Long id) {
+        Optional<Pedido> pedido = Optional.ofNullable(pedidoService.getPedidoById(id));
+        if (pedido.empty() != null) {
+            EntityModel<Pedido> resource = EntityModel.of(pedido.get());
+            resource.add(linkTo(methodOn(PedidoController.class).getPedidoById(id)).withSelfRel());
+            resource.add(linkTo(methodOn(PedidoController.class).getPedidos()).withRel("all-pedidos"));
+            return ResponseEntity.ok(resource);
+        } else {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("message", "Pelicula no encontrada, quizás no es tan buena para estar en nuestra lista :(");
+            map.put("status", "404");
+            return ResponseEntity.status(200).body(map);
+
+        }
     }
+
 }

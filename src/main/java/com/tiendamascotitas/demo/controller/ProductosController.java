@@ -1,4 +1,7 @@
 package com.tiendamascotitas.demo.controller;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -7,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,11 +52,10 @@ public class ProductosController {
         Optional<Producto> producto = productosService.getProductoByID(id);
         
         if (producto.isPresent()) {
-            Map<String, Object> map = new HashMap<String, Object>();
-            map.put("id_producto", producto.get().getId());
-            map.put("descripcion", producto.get().getDescripcion());
-            map.put("nombre", producto.get().getNombre());
-            return ResponseEntity.ok(map);
+            EntityModel<Producto> resource = EntityModel.of(producto.get());
+            resource.add(linkTo(methodOn(ProductosController.class).getProductoByID(id)).withSelfRel());
+            resource.add(linkTo(methodOn(ProductosController.class).getAllProductos()).withRel("all-productos"));
+            return ResponseEntity.ok(resource);
         } else {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("message", "el Producto no existe :o");
